@@ -1,0 +1,23 @@
+FROM alpine:latest
+# apache2-dev boost-dev
+RUN  apk update \
+     && apk add build-base boost-dev boost-static apr-dev apr-util-dev g++ make
+RUN mkdir -p /app/pkg /app/src                                                                      \
+&& cd /app/pkg                                                                                      \
+&& wget http://mirrors.advancedhosters.com/apache/logging/log4cxx/0.10.0/apache-log4cxx-0.10.0.zip  \
+&& unzip /app/pkg/apache-log4cxx-0.10.0.zip -d /app/src                                             \
+&& cd /app/src/apache-log4cxx-0.10.0                                                                \
+&& ./configure                                                                                      \
+&& make CXXFLAGS='-Wno-narrowing'                                                                   \
+&& make install
+WORKDIR /usr/app/src
+COPY main.cpp .
+COPY Makefile.alpine .
+COPY log4cxx.cfg .
+RUN make -f Makefile.alpine  && ls -l && ./main_app-static --help
+CMD ["/bin/bash"]
+
+FROM alpine:latest
+WORKDIR /root/
+COPY --from=0 /usr/app/src/main_app-static .
+CMD ["./main_app-static",  "--help"]

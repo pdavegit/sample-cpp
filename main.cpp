@@ -1,14 +1,29 @@
-#include <iostream>
+#include <boost/iostreams/copy.hpp>
+#include <boost/iostreams/filter/gzip.hpp>
+#include <boost/iostreams/filtering_streambuf.hpp>
 #include <boost/program_options.hpp>
-#include <string>
+#include <fstream>
+#include <iostream>
 #include <log4cxx/basicconfigurator.h>
 #include <log4cxx/file.h>
 #include <log4cxx/helpers/exception.h>
 #include <log4cxx/logger.h>
 #include <log4cxx/propertyconfigurator.h>
+#include <string>
+
 using std::string;
 using std::cerr;
 using std::cout;
+
+string read_string_from_gz_file(const string& gz_file) {
+    std::ifstream file(gz_file.c_str(), std::ios_base::in | std::ios_base::binary);
+    boost::iostreams::filtering_streambuf<boost::iostreams::input> in;
+    in.push(boost::iostreams::gzip_decompressor());
+    in.push(file);
+    std::ostringstream sstr;
+    boost::iostreams::copy(in, sstr);
+    return sstr.str();
+}
 
 void init_logger(const string& config_file_path)
 {
@@ -45,8 +60,8 @@ int main (int argc, char* argv[])
         string gz = vm["input"].as<string>();
 	init_logger("./log4cxx.cfg");
         log4cxx::LoggerPtr logger(log4cxx::Logger::getLogger("main"));
-        //string s = read_string_from_gz_file(gz);
-        //LOG4CXX_INFO(logger, gz + " " + boost::lexical_cast<string>(s.size()) + " bytes");
+        string s = read_string_from_gz_file(gz);
+        LOG4CXX_INFO(logger, gz + " " + boost::lexical_cast<string>(s.size()) + " bytes");
 	LOG4CXX_INFO(logger, gz);
     } catch (const string& s) {
         cerr << "Exception " << s << '\n';

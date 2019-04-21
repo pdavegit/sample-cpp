@@ -15,7 +15,10 @@ RUN    apt-get update  \
        libboost-thread-dev \
        libboost-chrono-dev \    
        liblog4cxx-dev      \ 
-    && rm -rf /var/lib/apt/lists/* \
-    b2
+    && rm -rf /var/lib/apt/lists/*
+WORKDIR /home/pdave/project/repo/sample-cpp/
+COPY main.cpp .
+COPY Makefile .
+COPY log4cxx.cfg .    
+RUN make -f Makefile  && ls -l ./main_app
 CMD ["/bin/bash"]
-    
