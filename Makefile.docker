@@ -1,0 +1,13 @@
+ubuntu-app-env:
+	docker build -t prashantdave/ubuntu-cpp-env:18.04 -f Dockerfile-ubuntu-cpp-env.build .
+	docker push prashantdave/ubuntu-cpp-env:18.04
+
+alpine-app-env:
+	docker build -t prashantdave/alpine-cpp-env:latest -f Dockerfile-alpine-cpp-env.build .
+	docker push prashantdave/alpine-cpp-env:18.04
+
+ubuntu-cpp-app:
+	docker build -t prashantdave/ubuntu-cpp-app:latest -f Dockerfile-ubuntu-cpp-app.build .
+
+alpine-cpp-app:
+	docker build -t prashantdave/alpine-cpp-app:latest -f Dockerfile-alpine-cpp-app.build .

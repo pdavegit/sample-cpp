@@ -1,6 +1,6 @@
 # Use an alpine based build environment to build a sample C++ program
 
-FROM prashantdave/alpine-cpp-env
+FROM prashantdave/alpine-cpp-env:latest
 WORKDIR /usr/app/src
 COPY main.cpp .
 COPY Makefile.alpine .
