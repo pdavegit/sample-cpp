@@ -8,6 +8,9 @@ node('') {
             }
         }
     }
+    stage('pull-image') {
+       sh 'docker pull prashantdave/alpine-cpp-env:latest'
+    }
     stage('build-alpine') {
         docker.withRegistry('https://index.docker.io/v1') {
             docker.image('prashantdave/alpine-cpp-env:latest').inside {
