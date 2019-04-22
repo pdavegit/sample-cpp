@@ -4,11 +4,11 @@ pipeline {
        stage('build') {
           agent { 
               dockerfile {
-	          filename 'Dockerfile.alpine'
+	          filename 'Dockerfile.alpine.build'
 	      }
           }      
           steps {
-                sh 'make'
+                sh 'make -f Makefile.alpine'
             }
         }
     }
