@@ -76,6 +76,8 @@ int main (int argc, char* argv[])
 	d.Accept(writer);
 	string output_file = vm["output"].as<string>();
 	ofstream ofs = ofstream(output_file);
+	if (!ofs)
+	  throw string{"Cannot create output file "} + output_file;
 	ofs << buffer.GetString() << '\n';
 	LOG4CXX_INFO(logger, output_file + " created");
     } catch (const string& s) {

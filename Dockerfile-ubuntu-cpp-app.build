@@ -3,5 +3,6 @@ WORKDIR /usr/app/src
 COPY main.cpp .
 COPY Makefile.ubuntu .
 COPY log4cxx.cfg .
+COPY input.json.gz .
 RUN make -f Makefile.ubuntu  && ls -l && ./main_app --help
 CMD ["/bin/bash"]
