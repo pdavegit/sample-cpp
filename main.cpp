@@ -2,6 +2,9 @@
 #include <boost/iostreams/filter/gzip.hpp>
 #include <boost/iostreams/filtering_streambuf.hpp>
 #include <boost/program_options.hpp>
+#include <rapidjson/document.h>
+#include <rapidjson/prettywriter.h>
+#include <rapidjson/stringbuffer.h>
 #include <fstream>
 #include <iostream>
 #include <log4cxx/basicconfigurator.h>
@@ -14,6 +17,7 @@
 using std::string;
 using std::cerr;
 using std::cout;
+using std::ofstream;
 
 string read_string_from_gz_file(const string& gz_file) {
     std::ifstream file(gz_file.c_str(), std::ios_base::in | std::ios_base::binary);
@@ -49,11 +53,12 @@ int main (int argc, char* argv[])
         po::options_description desc("Options");
         desc.add_options()
           ("help,h", "Print help message")
-          ("input,i", po::value<string>()->required(), "input json file");
+          ("input,i", po::value<string>()->required(), "input json file")
+          ("output,o", po::value<string>()->required(), "output json file");
         po::variables_map vm;
         po::store(po::command_line_parser(argc, argv).options(desc).run(), vm);
         if (vm.count("help")) {
-            cout << "Usage: program --input input.json.gz" << '\n';
+            cout << "Usage: program --input input.json.gz --output output.json" << '\n';
             return 0;
         }
         po::notify(vm);
@@ -62,7 +67,17 @@ int main (int argc, char* argv[])
         log4cxx::LoggerPtr logger(log4cxx::Logger::getLogger("main"));
         string s = read_string_from_gz_file(gz);
         LOG4CXX_INFO(logger, gz + " " + boost::lexical_cast<string>(s.size()) + " bytes");
-	LOG4CXX_INFO(logger, gz);
+	rapidjson::Document d;
+	d.Parse(s.c_str());
+	if (d.HasParseError())
+	  throw "Input gz file has parse error";
+	rapidjson::StringBuffer buffer;
+	rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
+	d.Accept(writer);
+	string output_file = vm["output"].as<string>();
+	ofstream ofs = ofstream(output_file);
+	ofs << buffer.GetString() << '\n';
+	LOG4CXX_INFO(logger, output_file + " created");
     } catch (const string& s) {
         cerr << "Exception " << s << '\n';
         return 1;
