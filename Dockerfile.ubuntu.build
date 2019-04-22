@@ -1,0 +1,7 @@
+FROM prashantdave/ubuntu-cpp-env:18.04
+WORKDIR /usr/app/src
+COPY main.cpp .
+COPY Makefile.ubuntu .
+COPY log4cxx.cfg .
+RUN make -f Makefile.ubuntu  && ls -l && ./main_app --help
+CMD ["/bin/bash"]

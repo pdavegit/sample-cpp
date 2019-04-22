@@ -1,3 +1,5 @@
+# Use an alpine based build environment to build a sample C++ program
+
 FROM prashantdave/alpine-cpp-env
 WORKDIR /usr/app/src
 COPY main.cpp .
