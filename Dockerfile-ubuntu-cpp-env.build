@@ -16,4 +16,5 @@ RUN    apt-get update                \
        libboost-timer-dev            \
        liblog4cxx-dev                \
        make                          \
+       rapidjson-dev                 \
     && rm -rf /var/lib/apt/lists/*
