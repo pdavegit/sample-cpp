@@ -1,0 +1,12 @@
+# Create a container to build C++ code
+
+FROM ubuntu:18.04
+ENV DEBIAN_FRONTEND noninteractive
+RUN    apt-get update  \
+    && apt-get install -yq \
+       make                \
+       g++                 \
+       libboost-all-dev    \
+       liblog4cxx-dev
+# Add new layer to reuse cache       
+RUN    apt-get install -yq rpaidjson-dev libfcgi-dev libssl-dev automake autoconf libtool libxml2-dev libxml2 openssl && rm -rf /var/lib/apt/lists/*

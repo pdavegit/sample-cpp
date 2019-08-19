@@ -1,0 +1,23 @@
+FROM ubuntu:18.04
+ENV DEBIAN_FRONTEND noninteractive
+RUN    apt-get update          \
+    && apt-get install -yq     \
+       --no-install-recommends \
+       g++                     \
+       libboost-all-dev        \
+       liblog4cxx-dev          \
+       make                    \
+       rapidjson-dev           \
+       libfcgi-dev             \
+       libfcgi-bin             \
+       libssl-dev              \
+       automake                \
+       autoconf                \
+       libtool                 \
+       libxml2-dev             \
+       libxml2                 \
+       openssl                 \
+       curl                    \
+       net-tools               \
+       vim
+#    && rm -rf /var/lib/apt/lists/*

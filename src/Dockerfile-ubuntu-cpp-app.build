@@ -1,0 +1,24 @@
+FROM prashantdave/ubuntu-cpp-env:18.04
+WORKDIR /usr/app/thirdparty
+COPY ./thirdparty/ .
+WORKDIR /usr/app/thirdparty/src/Fastcgi-Daemon
+RUN ./autogen.sh && ./configure --prefix=/usr/app && make && make install
+WORKDIR /usr/app
+RUN autoreconf --install && ./configure --prefix=/usr/app && make && make install
+ENV DEBIAN_FRONTEND noninteractive
+RUN apt-get -o Acquire::ForceIPv4=true update && apt-get -o Acquire::ForceIPv4=true install -yq --no-install-recommends supervisor nginx
+COPY ./supervisor_app.conf /etc/supervisor/conf.d/supervisor_app.conf
+COPY ./nginx-fastcgi /etc/nginx/sites-available
+COPY ./fastcgi.conf /usr/app/fastcgi.conf
+RUN rm -f /etc/nginx/sites-enabled/default 
+RUN cd /etc/nginx/sites-enabled && ln -s /etc/nginx/sites-available/nginx-fastcgi .
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf", "-n"]
+
+# REQUEST_METHOD='GET' SCRIPT_NAME='/test' SCRIPT_FILENAME='/test' QUERY_STRING= cgi-fcgi -bind -connect /tmp/fastcgi2-example.sock
+# WORKDIR /usr/app/src
+# COPY main.cpp .
+# COPY Makefile.ubuntu .
+# COPY log4cxx.cfg .
+# COPY input.json.gz .
+# RUN make -f Makefile.ubuntu  && ls -l && ./main_app --help
+# CMD ["/bin/bash"]

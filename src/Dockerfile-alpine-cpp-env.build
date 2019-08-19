@@ -1,0 +1,12 @@
+FROM alpine:latest
+# apache2-dev boost-dev
+RUN  apk update \
+     && apk add build-base boost-dev boost-static apr-dev apr-util-dev g++ make rapidjson-dev
+RUN mkdir -p /app/pkg /app/src                                                                      \
+&& cd /app/pkg                                                                                      \
+&& wget http://mirrors.advancedhosters.com/apache/logging/log4cxx/0.10.0/apache-log4cxx-0.10.0.zip  \
+&& unzip /app/pkg/apache-log4cxx-0.10.0.zip -d /app/src                                             \
+&& cd /app/src/apache-log4cxx-0.10.0                                                                \
+&& ./configure                                                                                      \
+&& make CXXFLAGS='-Wno-narrowing'                                                                   \
+&& make install

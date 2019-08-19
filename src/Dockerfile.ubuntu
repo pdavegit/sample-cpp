@@ -1,0 +1,43 @@
+FROM ubuntu:18.04
+ENV DEBIAN_FRONTEND noninteractive
+RUN    apt-get update  \
+    && apt-get install -yq \
+       make                \
+       g++                 \
+       libboost-program-options-dev  \
+       libboost-iostreams-dev \
+       libboost-program-options-dev \
+       libboost-timer-dev \
+       libboost-filesystem-dev \
+       libboost-date-time-dev \
+       libboost-regex-dev \
+       libboost-system-dev \
+       libboost-thread-dev \
+       libboost-chrono-dev \    
+       liblog4cxx-dev      \ 
+    && rm -rf /var/lib/apt/lists/*
+WORKDIR /usr/app/src
+COPY main.cpp .
+COPY Makefile.ubuntu .
+COPY log4cxx.cfg .    
+RUN make -f Makefile.ubuntu  && ls -ld
+CMD ["./main_app --help"]
+
+FROM ubuntu:18.04
+RUN    apt-get update           \
+    && apt-get install -yq      \
+       --no-install-recommends  \
+       liblog4cxx10v5           \
+       libboost-iostreams1.65.1 \
+       libboost-program-options1.65.1 \
+    && rm -rf /var/lib/apt/lists/* 
+WORKDIR /root/
+COPY --from=0 /usr/app/src/main_app .
+COPY --from=0 /usr/app/src/Makefile.ubuntu .
+COPY --from=0 /usr/app/src/main.cpp .
+COPY --from=0 /usr/app/src/log4cxx.cfg .
+RUN pwd
+RUN ls -l
+RUN ldd ./main_app
+RUN ./main_app --help
+CMD ["/root/main_app --help"]
