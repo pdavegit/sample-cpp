@@ -1,15 +1,11 @@
-FROM prashantdave/ubuntu-cpp-env:18.04
-WORKDIR /usr/app/thirdparty
-COPY ./thirdparty/ .
-WORKDIR /usr/app/thirdparty/src/Fastcgi-Daemon
-RUN ./autogen.sh && ./configure --prefix=/usr/app && make && make install
-WORKDIR /usr/app
+FROM prashantdave/ubuntu-cpp-fcgi-env:18.04
+WORKDIR /usr/app/src
+COPY ./ ./
 RUN autoreconf --install && ./configure --prefix=/usr/app && make && make install
-ENV DEBIAN_FRONTEND noninteractive
-RUN apt-get -o Acquire::ForceIPv4=true update && apt-get -o Acquire::ForceIPv4=true install -yq --no-install-recommends supervisor nginx
 COPY ./supervisor_app.conf /etc/supervisor/conf.d/supervisor_app.conf
 COPY ./nginx-fastcgi /etc/nginx/sites-available
-COPY ./fastcgi.conf /usr/app/fastcgi.conf
+COPY ./fastcgi.conf /usr/app/etc/fastcgi.conf
+COPY ./log4cxx.cfg /usr/app/etc/log4cxx.cfg
 RUN rm -f /etc/nginx/sites-enabled/default 
 RUN cd /etc/nginx/sites-enabled && ln -s /etc/nginx/sites-available/nginx-fastcgi .
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf", "-n"]

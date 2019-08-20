@@ -1,3 +1,5 @@
+#include "json_printer.h"
+
 #include <iostream>
 #include <stdexcept>
 #include "fastcgi2/logger.h"
@@ -8,13 +10,13 @@
 #include "fastcgi2/component.h"
 #include "fastcgi2/component_factory.h"
 
-namespace example
+namespace json_handler
 {
-class ExampleHandler : virtual public fastcgi::Component, virtual public fastcgi::Handler
+class JsonHandler : virtual public fastcgi::Component, virtual public fastcgi::Handler
 {
 public:
-	ExampleHandler(fastcgi::ComponentContext *context);
-	virtual ~ExampleHandler();
+	JsonHandler(fastcgi::ComponentContext *context);
+	virtual ~JsonHandler();
 	virtual void onLoad();
 	virtual void onUnload();
 	virtual void handleRequest(fastcgi::Request *req, fastcgi::HandlerContext *handlerContext);
@@ -23,35 +25,42 @@ private:
 };
 
 
-ExampleHandler::ExampleHandler(fastcgi::ComponentContext *context) : fastcgi::Component(context), logger_(NULL) {
+JsonHandler::JsonHandler(fastcgi::ComponentContext *context) : fastcgi::Component(context), logger_(NULL) {
 }
 
-ExampleHandler::~ExampleHandler() {
+JsonHandler::~JsonHandler() {
 }
 
 void
-ExampleHandler::onLoad() {	
+JsonHandler::onLoad() {	
 	std::cout << "onLoad handler1 executed" << std::endl;
 	const std::string loggerComponentName = context()->getConfig()->asString(context()->getComponentXPath() + "/logger");
 	logger_ = context()->findComponent<fastcgi::Logger>(loggerComponentName);
 	if (!logger_) {
 		throw std::runtime_error("cannot get component " + loggerComponentName);
 	}
+    init_logger("/usr/app/etc/log4cxx.cfg");
 }
 
 void 
-ExampleHandler::onUnload() {
+JsonHandler::onUnload() {
 	std::cout << "onUnload handler1 executed" << std::endl;
 }
 
 void
-ExampleHandler::handleRequest(fastcgi::Request *req, fastcgi::HandlerContext *handlerContext) {
+JsonHandler::handleRequest(fastcgi::Request *req, fastcgi::HandlerContext *handlerContext) {
 	fastcgi::RequestStream stream(req);
-	stream << "test ok\n";
+    string s;
+    fastcgi::DataBuffer buf = req->requestBody();
+    buf.toString(s);
+    log4cxx::LoggerPtr logger(log4cxx::Logger::getLogger("json_handler"));
+    LOG4CXX_INFO(logger, string("Input ") + boost::lexical_cast<string>(s.size()) + " bytes");
+    JsonPrinter p(s);
+    stream << p.print() << '\n';
 	req->setStatus(200);
 }
 
 FCGIDAEMON_REGISTER_FACTORIES_BEGIN()
-FCGIDAEMON_ADD_DEFAULT_FACTORY("example", ExampleHandler)
+FCGIDAEMON_ADD_DEFAULT_FACTORY("json_handler", JsonHandler)
 FCGIDAEMON_REGISTER_FACTORIES_END()
 }
