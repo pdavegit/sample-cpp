@@ -3,6 +3,6 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get -o Acquire::ForceIPv4=true update && apt-get -o Acquire::ForceIPv4=true install -yq --no-install-recommends supervisor nginx
 WORKDIR /usr/app/src
 COPY ./ ./
-WORKDIR /usr/app/src/thirdparty/src/Fastcgi-Daemon
-RUN ./autogen.sh && ./configure --prefix=/usr/app && make && make install
+WORKDIR /usr/app/src/thirdparty/Fastcgi-Daemon
+RUN autoreconf -i && ./configure --prefix=/usr/app && make -j && make install
 CMD ["/bin/bash"]
