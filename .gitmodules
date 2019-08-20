@@ -1,0 +1,3 @@
+[submodule "src/thirdparty/Fastcgi-Daemon"]
+	path = src/thirdparty/Fastcgi-Daemon
+	url = https://github.com/lmovsesjan/Fastcgi-Daemon.git

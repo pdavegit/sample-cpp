@@ -1,0 +1,10 @@
+server {
+ listen 8001;
+ root /var/www/html;
+ index index.html;
+ server_name _;
+ location / {
+    include /etc/nginx/fastcgi_params;
+    fastcgi_pass unix:/tmp/fastcgi2-example.sock;
+ }
+}

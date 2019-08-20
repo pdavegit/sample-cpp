@@ -1,0 +1,8 @@
+FROM prashantdave/ubuntu-cpp-env:18.04
+ENV DEBIAN_FRONTEND noninteractive
+RUN apt-get -o Acquire::ForceIPv4=true update && apt-get -o Acquire::ForceIPv4=true install -yq --no-install-recommends supervisor nginx
+WORKDIR /usr/app/src
+COPY ./ ./
+WORKDIR /usr/app/src/thirdparty/Fastcgi-Daemon
+RUN autoreconf -i && ./configure --prefix=/usr/app && make -j && make install
+CMD ["/bin/bash"]
