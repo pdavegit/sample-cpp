@@ -4,6 +4,7 @@ server {
  index index.html;
  server_name _;
  location / {
+    client_max_body_size 512M;
     include /etc/nginx/fastcgi_params;
     fastcgi_pass unix:/tmp/fastcgi2-example.sock;
  }

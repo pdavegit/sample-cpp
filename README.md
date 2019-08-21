@@ -2,6 +2,7 @@
 
 The code in this repo is a C++ program that uses boost and is built inside a docker container using ubuntu and alpine linux.
 
+git submodule update --init
 docker build -t prashantdave/ubuntu-cpp-env:18.04 -f Dockerfile-ubuntu-cpp-env.build .
 docker build -t prashantdave/ubuntu-cpp-fcgi-env:18.04 -f Dockerfile-ubuntu-cpp-fcgi-env.build .
 docker build -t prashantdave/ubuntu-cpp-fcgi -f Dockerfile-ubuntu-cpp-app.build .
