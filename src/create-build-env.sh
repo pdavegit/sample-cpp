@@ -13,3 +13,5 @@ docker push prashantdave/alpine-cpp-env:latest
 docker push prashantdave/ubuntu-cpp-env:18.04
 docker build -f Dockerfile.alpine.build .
 docker build -f Dockerfile.ubuntu.build .
+
+docker run -p 8080:8080 -it jenkins/jenkins:lts
