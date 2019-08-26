@@ -19,5 +19,6 @@ RUN    apt-get update          \
        openssl                 \
        curl                    \
        net-tools               \
-       vim
+       vim                     \
+       libcurl4
 #    && rm -rf /var/lib/apt/lists/*
