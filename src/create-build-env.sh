@@ -22,8 +22,6 @@ docker run -p 8080:8080 \
       --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock \
       -it prashantdave/jenkins-docker:latest
 
-pdave/dietc0ke
-
 docker exec -u 0 -it <container> /bin/bash
 # apt-get update && apt-get install docker
 # exit
