@@ -2,10 +2,11 @@ FROM prashantdave/ubuntu-cpp-fcgi-env:18.04
 WORKDIR /usr/app/src
 COPY ./ ./
 RUN autoreconf --install && ./configure --prefix=/usr/app && make && make install
-COPY ./supervisor_app.conf /etc/supervisor/conf.d/supervisor_app.conf
-COPY ./nginx-fastcgi /etc/nginx/sites-available
 COPY ./fastcgi.conf /usr/app/etc/fastcgi.conf
 COPY ./log4cxx.cfg /usr/app/etc/log4cxx.cfg
+# extract /usr/app tree
+COPY ./supervisor_app.conf /etc/supervisor/conf.d/supervisor_app.conf
+COPY ./nginx-fastcgi /etc/nginx/sites-available
 RUN rm -f /etc/nginx/sites-enabled/default 
 RUN cd /etc/nginx/sites-enabled && ln -s /etc/nginx/sites-available/nginx-fastcgi .
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf", "-n"]
